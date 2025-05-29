@@ -37,7 +37,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         try{
             userRepository.save(user);
-            log.info("da luu");
         } catch (DataIntegrityViolationException exception){
             throw new AppException(ErrorCode.USER_EXISTED);
         }
