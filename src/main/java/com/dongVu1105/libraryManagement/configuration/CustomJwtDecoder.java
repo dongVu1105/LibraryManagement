@@ -1,6 +1,8 @@
 package com.dongVu1105.libraryManagement.configuration;
 
 import com.dongVu1105.libraryManagement.dto.request.IntrospectRequest;
+import com.dongVu1105.libraryManagement.exception.AppException;
+import com.dongVu1105.libraryManagement.exception.ErrorCode;
 import com.dongVu1105.libraryManagement.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -33,9 +35,9 @@ public class CustomJwtDecoder implements JwtDecoder {
         try {
             var response = authenticationService.introspect(
                     IntrospectRequest.builder().token(token).build());
-
-            if (!response.isValid()) throw new JwtException("Token invalid");
-        } catch (/*JOSEException | ParseException e*/ Exception e) {
+        } catch (AppException e) {
+            throw new JwtException(ErrorCode.UNAUTHENTICATED.getMessage());
+        } catch (JOSEException | ParseException e) {
             throw new JwtException(e.getMessage());
         }
 

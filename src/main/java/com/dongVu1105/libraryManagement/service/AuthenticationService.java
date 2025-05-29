@@ -9,7 +9,6 @@ import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.exception.ErrorCode;
 import com.dongVu1105.libraryManagement.repository.InvalidatedTokenRepository;
 import com.dongVu1105.libraryManagement.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -25,7 +24,6 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
