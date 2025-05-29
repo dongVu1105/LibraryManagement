@@ -35,7 +35,7 @@ public class CustomJwtDecoder implements JwtDecoder {
                     IntrospectRequest.builder().token(token).build());
 
             if (!response.isValid()) throw new JwtException("Token invalid");
-        } catch (JOSEException | ParseException e) {
+        } catch (/*JOSEException | ParseException e*/ Exception e) {
             throw new JwtException(e.getMessage());
         }
 
