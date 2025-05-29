@@ -15,8 +15,9 @@ import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
 import com.nimbusds.jose.JOSEException;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class CustomJwtDecoder implements JwtDecoder {
     @Value("${jwt.signerKey}")
     private String signerKey;
