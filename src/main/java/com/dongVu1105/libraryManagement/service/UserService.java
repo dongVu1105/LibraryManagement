@@ -3,23 +3,27 @@ package com.dongVu1105.libraryManagement.service;
 import com.dongVu1105.libraryManagement.dto.request.UserCreationRequest;
 import com.dongVu1105.libraryManagement.dto.request.UserUpdateRequest;
 import com.dongVu1105.libraryManagement.dto.response.UserResponse;
+import com.dongVu1105.libraryManagement.entity.Role;
 import com.dongVu1105.libraryManagement.entity.User;
+import com.dongVu1105.libraryManagement.enums.RoleEnum;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.exception.ErrorCode;
 import com.dongVu1105.libraryManagement.mapper.UserMapper;
+import com.dongVu1105.libraryManagement.repository.RoleRepository;
 import com.dongVu1105.libraryManagement.repository.UserRepository;
 import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Service
@@ -30,11 +34,13 @@ public class UserService {
     UserMapper userMapper;
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest request) throws AppException {
         User user = userMapper.toUser(request);
-        log.info(request.getPassword());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
         try{
             userRepository.save(user);
         } catch (DataIntegrityViolationException exception){
@@ -53,11 +59,21 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
+    public UserResponse getMyInfo() throws AppException {
+        var context = SecurityContextHolder.getContext();
+        String username = context.getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        return userMapper.toUserResponse(user);
+    }
+
     public UserResponse updateUser (String id ,UserUpdateRequest request) throws AppException {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
