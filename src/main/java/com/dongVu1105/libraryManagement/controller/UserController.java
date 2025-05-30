@@ -45,10 +45,10 @@ public class UserController {
                 .result(userService.getMyInfo()).build();
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/updateMyInfo")
     public ApiResponse<UserResponse> updateUser
-            (@PathVariable("userId") String id,@RequestBody @Valid UserUpdateRequest request) throws AppException {
-        return ApiResponse.<UserResponse>builder().result(userService.updateUser(id, request)).build();
+            (@RequestBody @Valid UserUpdateRequest request) throws AppException {
+        return ApiResponse.<UserResponse>builder().result(userService.updateUser(request)).build();
     }
 
     @GetMapping("/username/{username}")

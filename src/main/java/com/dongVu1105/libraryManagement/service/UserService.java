@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
 
+
     public UserResponse createUser(UserCreationRequest request) throws AppException {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -51,16 +53,19 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUser (){
         return userRepository.findAll().stream()
                 .map(userMapper::toUserResponse).toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUserById (String id) throws AppException {
         return userMapper.toUserResponse(userRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public UserResponse getMyInfo() throws AppException {
         var context = SecurityContextHolder.getContext();
         String username = context.getAuthentication().getName();
@@ -69,19 +74,23 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
-    public UserResponse updateUser (String id ,UserUpdateRequest request) throws AppException {
-        User user = userRepository.findById(id).orElseThrow(
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public UserResponse updateUser (UserUpdateRequest request) throws AppException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public UserResponse getUserByUsername (String username) throws AppException {
         return userMapper.toUserResponse(userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED)));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser (String id){
         userRepository.deleteById(id);
     }
