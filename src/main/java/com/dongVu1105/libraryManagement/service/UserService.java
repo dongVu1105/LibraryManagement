@@ -39,8 +39,10 @@ public class UserService {
     public UserResponse createUser(UserCreationRequest request) throws AppException {
         User user = userMapper.toUser(request);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findById(RoleEnum.USER.name()).orElseThrow(
+                () -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
+        user.setRoles(roles);
         try{
             userRepository.save(user);
         } catch (DataIntegrityViolationException exception){
@@ -72,8 +74,6 @@ public class UserService {
                 () -> new AppException(ErrorCode.USER_NOT_EXISTED));
         userMapper.updateUser(request, user);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        var roles = roleRepository.findAllById(request.getRoles());
-        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 

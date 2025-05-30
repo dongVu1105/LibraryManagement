@@ -20,5 +20,4 @@ public class UserCreationRequest {
     String password;
     String phoneNumber;
     LocalDate birthday;
-    Set<String> roles;
 }
