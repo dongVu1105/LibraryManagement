@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -26,4 +27,6 @@ public class User {
     String phoneNumber;
     LocalDate birthday;
 
+    @ManyToMany
+    Set<Role> roles;
 }
