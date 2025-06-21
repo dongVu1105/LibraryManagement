@@ -108,7 +108,7 @@ public class AuthenticationService {
         Date expiredTime = signedJWT.getJWTClaimsSet().getExpirationTime();
         invalidatedTokenRepository.save(InvalidatedToken.builder().id(jit).expiredTime(expiredTime).build());
         String username = signedJWT.getJWTClaimsSet().getSubject();
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.UNAUTHENTICATED));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
         String token = generateToken(user);
         return AuthenticateResponse.builder().valid(true).token(token).build();
     }
