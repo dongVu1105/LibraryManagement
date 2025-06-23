@@ -45,7 +45,6 @@ public class GlobalException {
         String enumKey = e.getFieldError().getDefaultMessage();
         ErrorCode errorCode = ErrorCode.INVALID_KEY;
         Map<String, Objects> attributes = null;
-        log.info(e.toString());
         try {
             errorCode = ErrorCode.valueOf(enumKey);
             var constraintViolation =
