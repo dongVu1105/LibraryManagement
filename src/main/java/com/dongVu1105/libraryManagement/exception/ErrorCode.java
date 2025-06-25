@@ -21,7 +21,8 @@ public enum ErrorCode {
     BOOK_EXISTED(1013, "book existed", HttpStatus.BAD_REQUEST),
     CATEGORY_EXISTED(1014, "category existed", HttpStatus.BAD_REQUEST),
     HISTORY_NOT_EXISTED(1015, "history not existed", HttpStatus.BAD_REQUEST),
-    OUT_OF_BOOK(1016, "out of book", HttpStatus.BAD_REQUEST)
+    OUT_OF_BOOK(1016, "out of book", HttpStatus.BAD_REQUEST),
+    INVALID_QUANTITY(1017, "quantity must be at least {min} books", HttpStatus.BAD_REQUEST)
     ;
 
 

@@ -5,6 +5,7 @@ import com.dongVu1105.libraryManagement.dto.response.ApiResponse;
 import com.dongVu1105.libraryManagement.dto.response.BookResponse;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.service.BookService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,12 +23,12 @@ public class BookController {
     BookService bookService;
 
     @PostMapping("/create")
-    public ApiResponse<BookResponse> create (@RequestBody BookRequest bookRequest) throws AppException {
+    public ApiResponse<BookResponse> create (@RequestBody @Valid BookRequest bookRequest) throws AppException {
         return ApiResponse.<BookResponse>builder().result(bookService.create(bookRequest)).build();
     }
 
     @PutMapping("/update")
-    public ApiResponse<BookResponse> update (@RequestBody BookRequest bookRequest) throws AppException {
+    public ApiResponse<BookResponse> update (@RequestBody @Valid BookRequest bookRequest) throws AppException {
         return ApiResponse.<BookResponse>builder().result(bookService.update(bookRequest)).build();
     }
 
