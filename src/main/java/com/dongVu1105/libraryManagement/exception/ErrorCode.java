@@ -15,7 +15,13 @@ public enum ErrorCode {
     INVALID_USERNAME (1007, "username must be at least {min} character", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1008, "password must be at least {min} character", HttpStatus.BAD_REQUEST),
     INVALID_KEY(1009, "invalid key in validation", HttpStatus.BAD_REQUEST),
-    INVALID_BIRTH(1010, "your age must be at least {min} years old", HttpStatus.BAD_REQUEST)
+    INVALID_BIRTH(1010, "your age must be at least {min} years old", HttpStatus.BAD_REQUEST),
+    BOOK_NOT_EXISTED(1011, "book not existed", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_EXISTED(1012, "category not existed", HttpStatus.BAD_REQUEST),
+    BOOK_EXISTED(1013, "book existed", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED(1014, "category existed", HttpStatus.BAD_REQUEST),
+    HISTORY_NOT_EXISTED(1015, "history not existed", HttpStatus.BAD_REQUEST),
+    OUT_OF_BOOK(1016, "out of book", HttpStatus.BAD_REQUEST)
     ;
 
 

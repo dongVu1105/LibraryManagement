@@ -1,5 +1,6 @@
 package com.dongVu1105.libraryManagement.controller;
 
+import com.dongVu1105.libraryManagement.dto.request.AccountCreationByAdminRequest;
 import com.dongVu1105.libraryManagement.dto.request.UserCreationRequest;
 import com.dongVu1105.libraryManagement.dto.request.UserUpdateRequest;
 import com.dongVu1105.libraryManagement.dto.response.ApiResponse;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +20,7 @@ import java.util.List;
 @RequestMapping("/user")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class UserController {
     UserService userService;
 
@@ -25,6 +28,13 @@ public class UserController {
     public ApiResponse<UserResponse> createUser (@RequestBody @Valid UserCreationRequest request) throws AppException {
         return ApiResponse.<UserResponse>builder()
                 .result(userService.createUser(request)).build();
+    }
+
+    @PostMapping("/createAccount")
+    public ApiResponse<UserResponse> createAccountByAdmin (@RequestBody @Valid AccountCreationByAdminRequest request)
+            throws AppException {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.createAccountByAdmin(request)).build();
     }
 
     @GetMapping("/getUsers")
