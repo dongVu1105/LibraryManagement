@@ -34,7 +34,7 @@ public class CustomJwtDecoder implements JwtDecoder {
 
         try {
             var response = authenticationService.introspect(
-                    IntrospectRequest.builder().token(token).build());
+                    IntrospectRequest.builder().accessToken(token).build());
             if (!response.isValid()) throw new JwtException("Token invalid"); // cần chú y
         } catch (AppException e) {
             throw new JwtException(ErrorCode.UNAUTHENTICATED.getMessage());
