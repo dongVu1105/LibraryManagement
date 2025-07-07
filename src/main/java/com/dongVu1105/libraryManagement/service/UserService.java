@@ -1,5 +1,6 @@
 package com.dongVu1105.libraryManagement.service;
 
+import com.dongVu1105.libraryManagement.dto.request.AccountCreationByAdminRequest;
 import com.dongVu1105.libraryManagement.dto.request.UserCreationRequest;
 import com.dongVu1105.libraryManagement.dto.request.UserUpdateRequest;
 import com.dongVu1105.libraryManagement.dto.response.UserResponse;
@@ -45,6 +46,20 @@ public class UserService {
         roles.add(roleRepository.findById(RoleEnum.USER.name()).orElseThrow(
                 () -> new AppException(ErrorCode.ROLE_NOT_EXISTED)));
         user.setRoles(roles);
+        try{
+            userRepository.save(user);
+        } catch (DataIntegrityViolationException exception){
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        return userMapper.toUserResponse(user);
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    public UserResponse createAccountByAdmin(AccountCreationByAdminRequest request) throws AppException {
+        User user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
         try{
             userRepository.save(user);
         } catch (DataIntegrityViolationException exception){
