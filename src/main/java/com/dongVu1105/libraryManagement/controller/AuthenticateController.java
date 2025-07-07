@@ -27,6 +27,7 @@ public class AuthenticateController {
 
     @PostMapping("/login")
     ApiResponse<AuthenticateResponse> authenticate (@RequestBody AuthenticateRequest request) throws AppException {
+        System.out.println("Da vao controller");
         return ApiResponse.<AuthenticateResponse>builder()
                 .result(authenticationService.authenticate(request)).build();
     }
