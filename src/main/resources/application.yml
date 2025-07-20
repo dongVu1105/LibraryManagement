@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: libraryManagement
+  datasource:
+    url: jdbc:mysql://localhost:3306/library
+    username: root
+    password: 12345678
+  jpa:
+    hibernate:
+      ddl-auto : update
+    properties:
+      hibernate:
+        dialect : org.hibernate.dialect.MySQL8Dialect
+
+jwt:
+  signerKey : "4vCM6CA5NXhXhG+LjHY+PfQRZYGjm13cHoNxVPuDyEYz2XB5SO/8Ko2vCxBkqHeT"
+  access-token-time : 20
+  refresh-token-time : 100
+
+app:
+  file:
+    storage-dir: "D:/libraryManagement/libraryManagement/media-storage"
+    prefix-url: "http://localhost:8080/media/download/"
+

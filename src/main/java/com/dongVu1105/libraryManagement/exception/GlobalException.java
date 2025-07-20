@@ -18,12 +18,12 @@ public class GlobalException {
 
     private static final String MIN_ATTRIBUTE = "min";
 
-    @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ApiResponse> HandlingRuntimeException (Exception e){
-        ErrorCode errorCode = ErrorCode.UNCATEGORIZED;
-        return ResponseEntity.status(errorCode.getHttpStatusCode())
-                .body(ApiResponse.builder().code(errorCode.getCode()).message(errorCode.getMessage()).build());
-    }
+//    @ExceptionHandler(value = Exception.class)
+//    public ResponseEntity<ApiResponse> HandlingRuntimeException (Exception e){
+//        ErrorCode errorCode = ErrorCode.UNCATEGORIZED;
+//        return ResponseEntity.status(errorCode.getHttpStatusCode())
+//                .body(ApiResponse.builder().code(errorCode.getCode()).message(errorCode.getMessage()).build());
+//    }
 
 
     @ExceptionHandler(value = AppException.class)
