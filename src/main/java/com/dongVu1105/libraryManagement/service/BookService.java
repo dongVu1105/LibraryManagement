@@ -1,13 +1,12 @@
 package com.dongVu1105.libraryManagement.service;
 
 import com.dongVu1105.libraryManagement.dto.request.BookRequest;
+import com.dongVu1105.libraryManagement.dto.request.BookSearchRequest;
 import com.dongVu1105.libraryManagement.dto.request.FileInfo;
 import com.dongVu1105.libraryManagement.dto.response.BookResponse;
-import com.dongVu1105.libraryManagement.dto.response.UserResponse;
+import com.dongVu1105.libraryManagement.dto.response.PageResponse;
 import com.dongVu1105.libraryManagement.entity.Book;
-import com.dongVu1105.libraryManagement.entity.Category;
 import com.dongVu1105.libraryManagement.entity.FileManagement;
-import com.dongVu1105.libraryManagement.entity.User;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.exception.ErrorCode;
 import com.dongVu1105.libraryManagement.mapper.BookMapper;
@@ -20,7 +19,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -85,5 +87,19 @@ public class BookService {
         fileManagementRepository.save(fileManagement);
         book.setImage(fileInfo.getUrl());
         return bookMapper.toBookResponse(bookRepository.save(book));
+    }
+
+    public PageResponse<BookResponse> searchByName (BookSearchRequest request){
+        Sort sort = Sort.by("id").ascending();
+        Pageable pageable = PageRequest.of(request.getPage() -1, request.getSize(), sort);
+        Page<Book> books = bookRepository.findAllByNameContaining(request.getKeyword(), pageable);
+        List<BookResponse> bookResponses = books.getContent().stream().map(bookMapper::toBookResponse).toList();
+        return PageResponse.<BookResponse>builder()
+                .page(request.getPage())
+                .size(books.getSize())
+                .totalElements(books.getTotalElements())
+                .totalPages(books.getTotalPages())
+                .data(bookResponses)
+                .build();
     }
 }

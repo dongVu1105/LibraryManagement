@@ -1,8 +1,10 @@
 package com.dongVu1105.libraryManagement.controller;
 
 import com.dongVu1105.libraryManagement.dto.request.BookRequest;
+import com.dongVu1105.libraryManagement.dto.request.BookSearchRequest;
 import com.dongVu1105.libraryManagement.dto.response.ApiResponse;
 import com.dongVu1105.libraryManagement.dto.response.BookResponse;
+import com.dongVu1105.libraryManagement.dto.response.PageResponse;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.service.BookService;
 import jakarta.validation.Valid;
@@ -56,5 +58,12 @@ public class BookController {
     @PutMapping("/image")
     public ApiResponse<BookResponse> updateImage (@RequestParam MultipartFile file, @RequestParam String bookId) throws AppException, IOException {
         return ApiResponse.<BookResponse>builder().result(bookService.updateImage(file, bookId)).build();
+    }
+
+    @GetMapping("/search")
+    public ApiResponse<PageResponse<BookResponse>> searchByName (@RequestBody BookSearchRequest request){
+        return ApiResponse.<PageResponse<BookResponse>>builder()
+                .result(bookService.searchByName(request))
+                .build();
     }
 }
