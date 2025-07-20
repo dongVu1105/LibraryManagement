@@ -16,4 +16,5 @@ public class BookResponse {
     String description;
     Long quantity;
     String category;
+    String image;
 }
