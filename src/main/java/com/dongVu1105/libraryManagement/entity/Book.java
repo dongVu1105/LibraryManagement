@@ -18,4 +18,5 @@ public class Book {
     String description;
     Long quantity;
     String category;
+    String image;
 }

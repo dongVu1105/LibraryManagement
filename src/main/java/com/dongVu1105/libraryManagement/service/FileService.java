@@ -36,8 +36,8 @@ public class FileService {
         FileInfo fileInfo = fileRepository.store(file);
         FileManagement fileManagement = fileMapper.toFileManagement(fileInfo);
 
-        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
-        fileManagement.setUserId(userId);
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        fileManagement.setUsername(username);
         fileManagementRepository.save(fileManagement);
         return FileResponse.builder()
                 .url(fileInfo.getUrl())
