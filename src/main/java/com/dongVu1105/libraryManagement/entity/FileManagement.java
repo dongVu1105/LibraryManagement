@@ -16,7 +16,7 @@ import lombok.experimental.FieldDefaults;
 public class FileManagement {
     @Id
     String id;
-    String userId;
+    String username;
     String path;
     String contentType;
     long size;

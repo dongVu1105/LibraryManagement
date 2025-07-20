@@ -1,15 +1,21 @@
 package com.dongVu1105.libraryManagement.service;
 
 import com.dongVu1105.libraryManagement.dto.request.AccountCreationByAdminRequest;
+import com.dongVu1105.libraryManagement.dto.request.FileInfo;
 import com.dongVu1105.libraryManagement.dto.request.UserCreationRequest;
 import com.dongVu1105.libraryManagement.dto.request.UserUpdateRequest;
+import com.dongVu1105.libraryManagement.dto.response.FileResponse;
 import com.dongVu1105.libraryManagement.dto.response.UserResponse;
+import com.dongVu1105.libraryManagement.entity.FileManagement;
 import com.dongVu1105.libraryManagement.entity.Role;
 import com.dongVu1105.libraryManagement.entity.User;
 import com.dongVu1105.libraryManagement.enums.RoleEnum;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.exception.ErrorCode;
+import com.dongVu1105.libraryManagement.mapper.FileMapper;
 import com.dongVu1105.libraryManagement.mapper.UserMapper;
+import com.dongVu1105.libraryManagement.repository.FileManagementRepository;
+import com.dongVu1105.libraryManagement.repository.FileRepository;
 import com.dongVu1105.libraryManagement.repository.RoleRepository;
 import com.dongVu1105.libraryManagement.repository.UserRepository;
 import lombok.AccessLevel;
@@ -21,7 +27,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -37,6 +45,9 @@ public class UserService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     RoleRepository roleRepository;
+    FileManagementRepository fileManagementRepository;
+    FileRepository fileRepository;
+    FileMapper fileMapper;
 
 
     public UserResponse createUser(UserCreationRequest request) throws AppException {
@@ -110,5 +121,17 @@ public class UserService {
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser (String id){
         userRepository.deleteById(id);
+    }
+
+    public UserResponse updateAvatar (MultipartFile file) throws AppException, IOException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username).orElseThrow(
+                () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        FileInfo fileInfo = fileRepository.store(file);
+        FileManagement fileManagement = fileMapper.toFileManagement(fileInfo);
+        fileManagement.setUsername(username);
+        fileManagementRepository.save(fileManagement);
+        user.setAvatar(fileInfo.getUrl());
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 }
