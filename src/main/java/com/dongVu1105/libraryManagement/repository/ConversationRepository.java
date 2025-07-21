@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface ConversationRepository extends MongoRepository<Conversation, String> {
+    Optional<Conversation> findById(String conversationId);
+
     Optional<Conversation> findByConversationHash(String conversationHash);
     @Query("{'participantInfos.username' : ?0}")
     List<Conversation> findAllByParticipantInfosContains (String username);

@@ -18,8 +18,8 @@ spring:
 
 jwt:
   signerKey : "4vCM6CA5NXhXhG+LjHY+PfQRZYGjm13cHoNxVPuDyEYz2XB5SO/8Ko2vCxBkqHeT"
-  access-token-time : 200
-  refresh-token-time : 1000
+  access-token-time : 2000
+  refresh-token-time : 10000
 
 app:
   file:
