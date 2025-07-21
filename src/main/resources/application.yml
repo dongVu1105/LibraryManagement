@@ -11,6 +11,10 @@ spring:
     properties:
       hibernate:
         dialect : org.hibernate.dialect.MySQL8Dialect
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/library?authSource=admin
+      auto-index-creation: true
 
 jwt:
   signerKey : "4vCM6CA5NXhXhG+LjHY+PfQRZYGjm13cHoNxVPuDyEYz2XB5SO/8Ko2vCxBkqHeT"

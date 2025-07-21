@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Entity
@@ -19,8 +20,8 @@ public class History {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-    LocalDate borrowDate;
-    LocalDate returnDate;
+    Instant borrowDate;
+    Instant returnDate;
     String createdBy;
     String modifiedBy;
     String username;

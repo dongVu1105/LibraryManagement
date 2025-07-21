@@ -3,6 +3,7 @@ package com.dongVu1105.libraryManagement.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -12,8 +13,8 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class HistoryResponse {
     String id;
-    LocalDate borrowDate;
-    LocalDate returnDate;
+    String borrowDate;
+    String returnDate;
     String createdBy;
     String modifiedBy;
     String username;
