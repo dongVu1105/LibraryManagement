@@ -6,6 +6,7 @@ import com.dongVu1105.libraryManagement.dto.response.ConversationResponse;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.repository.ConversationRepository;
 import com.dongVu1105.libraryManagement.service.ConversationService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -23,7 +24,7 @@ public class ConversationController {
     ConversationService conversationService;
 
     @PostMapping("/create")
-    public ApiResponse<ConversationResponse> create (@RequestBody ConversationRequest request) throws AppException {
+    public ApiResponse<ConversationResponse> create (@RequestBody @Valid ConversationRequest request) throws AppException {
         return ApiResponse.<ConversationResponse>builder().result(conversationService.create(request)).build();
     }
 
