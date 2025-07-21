@@ -1,17 +1,19 @@
 package com.dongVu1105.libraryManagement.service;
 
+import com.corundumstudio.socketio.SocketIOClient;
+import com.corundumstudio.socketio.SocketIOServer;
 import com.dongVu1105.libraryManagement.dto.request.ChatMessageRequest;
 import com.dongVu1105.libraryManagement.dto.response.ChatMessageResponse;
-import com.dongVu1105.libraryManagement.entity.ChatMessage;
-import com.dongVu1105.libraryManagement.entity.Conversation;
-import com.dongVu1105.libraryManagement.entity.ParticipantInfo;
-import com.dongVu1105.libraryManagement.entity.User;
+import com.dongVu1105.libraryManagement.entity.*;
 import com.dongVu1105.libraryManagement.exception.AppException;
 import com.dongVu1105.libraryManagement.exception.ErrorCode;
 import com.dongVu1105.libraryManagement.mapper.ChatMessageMapper;
 import com.dongVu1105.libraryManagement.repository.ChatMessageRepository;
 import com.dongVu1105.libraryManagement.repository.ConversationRepository;
 import com.dongVu1105.libraryManagement.repository.UserRepository;
+import com.dongVu1105.libraryManagement.repository.WebSocketSessionRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,9 @@ public class ChatMessageService {
     ConversationRepository conversationRepository;
     UserRepository userRepository;
     DateTimeFormat dateTimeFormat;
+    WebSocketSessionRepository webSocketSessionRepository;
+    SocketIOServer socketIOServer;
+    ObjectMapper objectMapper;
 
     public List<ChatMessageResponse> getMessage (String conversationId) throws AppException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -69,7 +74,32 @@ public class ChatMessageService {
                         .avatar(myInfo.getAvatar())
                         .build())
                 .build();
-        chatMessage = chatMessageRepository.save(chatMessage);
+        ChatMessageResponse chatMessageResponse = chatMessageMapper.toChatMessageResponse(
+                chatMessageRepository.save(chatMessage));
+        List<String> participantIds = new ArrayList<>();
+        for(ParticipantInfo participantInfo : conversation.getParticipantInfos()){
+            User user = userRepository.findByUsername(participantInfo.getUsername()).orElseThrow(
+                    () -> new AppException(ErrorCode.USER_NOT_EXISTED));
+            participantIds.add(user.getId());
+        }
+        List<WebSocketSession> webSocketSessions = webSocketSessionRepository.findAllByUserIdIn(participantIds);
+        Map<String, WebSocketSession> lookup = new TreeMap<>();
+        for(WebSocketSession webSocketSession : webSocketSessions){
+            lookup.put(webSocketSession.getSessionId(), webSocketSession);
+        }
+        socketIOServer.getAllClients().forEach(socketIOClient -> {
+            WebSocketSession webSocketSession = lookup.get(socketIOClient.getSessionId().toString());
+            if(Objects.nonNull(webSocketSession)){
+                String message = null;
+                try {
+                    chatMessageResponse.setMe(myInfo.getId().equals(webSocketSession.getUserId()));
+                    message = objectMapper.writeValueAsString(chatMessageResponse);
+                    socketIOClient.sendEvent("message", message);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
         return toChatMessageResponse(chatMessage);
     }
 
